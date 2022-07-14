@@ -18,13 +18,15 @@ const DensityWordChecker = (props: DensityWordCheckerProps) => {
   const [result, setResult] = useState<DataType[]>();
 
   const onFinish = (values: any) => {
-    console.log('Success:', values);
     const numberOfWordPhrases = values.numberWordPhrases;
     const termFrequencyMap = new Map();
-    const processedInput = values.input.replace(/[\r|\n|,|.|-|\u2026]/gm, '');
+    const processedInput = values.input
+      .trim()
+      .replace(/[\r|\n|,|.|-|\u2026]/gm, '');
     const data: DataType[] = [];
-    const documentArray = processedInput.split(' ');
-    const totalOccurrenceTerm = documentArray.length - numberOfWordPhrases - 1;
+    const processedArray = processedInput.split(' ');
+    const documentArray = processedArray.filter((el: any) => el.trim() !== '');
+    const totalOccurrenceTerm = documentArray.length - numberOfWordPhrases + 1;
 
     console.log(documentArray);
     for (let i = 0; i < totalOccurrenceTerm; i++) {
@@ -51,7 +53,6 @@ const DensityWordChecker = (props: DensityWordCheckerProps) => {
       });
     });
 
-    // console.log(data);
     setResult(data);
   };
 
