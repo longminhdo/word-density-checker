@@ -25,7 +25,14 @@ const DensityWordChecker = (props: DensityWordCheckerProps) => {
       .replace(/[\r|\n|,|.|-|\u2026]/gm, '');
     const data: DataType[] = [];
     const processedArray = processedInput.split(' ');
-    const documentArray = processedArray.filter((el: any) => el.trim() !== '');
+    let documentArray = [];
+    if (numberOfWordPhrases === 1) {
+      documentArray = processedArray.filter(
+        (el: any) => el.trim() !== '' && el.length > 1
+      );
+    } else {
+      documentArray = processedArray.filter((el: any) => el.trim() !== '');
+    }
     const totalOccurrenceTerm = documentArray.length - numberOfWordPhrases + 1;
 
     console.log(documentArray);
