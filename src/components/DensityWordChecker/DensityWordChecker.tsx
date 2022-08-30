@@ -35,7 +35,6 @@ const DensityWordChecker = (props: DensityWordCheckerProps) => {
     }
     const totalOccurrenceTerm = documentArray.length - numberOfWordPhrases + 1;
 
-    console.log(documentArray);
     for (let i = 0; i < totalOccurrenceTerm; i++) {
       var term = '';
       for (let j = i; j < i + numberOfWordPhrases; j++) {

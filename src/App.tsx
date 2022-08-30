@@ -1,6 +1,7 @@
-import { Layout } from 'antd';
+import { Divider, Layout } from 'antd';
 import './App.scss';
 import DensityWordChecker from './components/DensityWordChecker/DensityWordChecker';
+import HtmlAnalysis from './components/HtmlAnalysis/HtmlAnalysis';
 
 const { Header, Content } = Layout;
 
@@ -11,6 +12,8 @@ function App() {
         <Header>Header</Header>
         <Content>
           <DensityWordChecker />
+          <Divider />
+          <HtmlAnalysis />
         </Content>
       </Layout>
     </div>
