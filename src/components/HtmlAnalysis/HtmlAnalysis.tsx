@@ -1,4 +1,5 @@
 import { Button, Form, Input } from 'antd';
+import { useState } from 'react';
 import './HtmlAnalysis.scss';
 
 type Props = {};
@@ -53,7 +54,36 @@ function addStr(str: string, index: number, stringToAdd: string) {
   );
 }
 
+const addIdToHeadingTags = (html: string, menuObject: any) => {
+  const indArr = [...getAllIndices(html)]; // O(n)
+  let count = 0;
+
+  //~ 0(1) same reason
+  for (let i = 0; i < indArr.length; i++) {
+    let str = ``;
+
+    html = addStr(html, indArr[i] + 3 + count, ` id='${menuObject[i].id}' `); //take out index => O(1)
+    str = ` id='${menuObject[i].id}' `;
+    count += str.length;
+  }
+};
+
+const getStyles = (tag: string) => {
+  if (tag === 'h1') {
+    return 'font-size: 20px';
+  }
+
+  if (tag === 'h2') {
+    return 'margin-left: 20px; font-size: 16px';
+  }
+
+  if (tag === 'h3') {
+    return 'margin-left: 40px; font-size: 12px';
+  }
+};
+
 const HtmlAnalysis = (props: Props) => {
+  const [res, setRes] = useState<string>('');
   const getText = (el: string) => {
     let regex = '</?!?(.)[^>]*>';
 
@@ -64,9 +94,9 @@ const HtmlAnalysis = (props: Props) => {
 
   const onFinish = (v: any) => {
     let html = String(v.input);
-    const regexp = /<h[1-3][^>]*?>(?<TagText>.*?)<\/h[1-3]>/g;
+    const regexp = /<h[1-3][^>]*?>(.*?)<\/h[1-3]>/g;
 
-    const array = [...html.matchAll(regexp)];
+    const array = [...html.matchAll(regexp)]; //O(n)
 
     // const niceArray = array.map((el: any) => el[0]);
     // console.log(niceArray);
@@ -76,19 +106,19 @@ const HtmlAnalysis = (props: Props) => {
       const tag = el[0].slice(1, 3);
 
       return { text, id, tag };
-    });
+    }); // ~~O(1) bcz: around 1-10 h1,h2,h3 tags
 
-    const indArr = [...getAllIndices(html)];
-    let count = 0;
-    for (let i = 0; i < indArr.length; i++) {
-      let str = ``;
+    let tmp = '';
+    result.forEach(
+      (el: any) =>
+        (tmp += `<${el.tag} style="${getStyles(
+          el.tag
+        )}"> <span style="font-weight: bold">	&#60;${el.tag.toUpperCase()}&#62;</span> ${
+          el.text
+        } </${el.tag}> `)
+    );
 
-      html = addStr(html, indArr[i] + 3 + count, ` id='${result[i].id}' `);
-      str = ` id='${result[i].id}' `;
-      count += str.length;
-    }
-
-    console.log(html);
+    setRes(tmp);
   };
 
   return (
@@ -110,6 +140,8 @@ const HtmlAnalysis = (props: Props) => {
           </Button>
         </Item>
       </Form>
+
+      <div dangerouslySetInnerHTML={{ __html: res }} />
     </div>
   );
 };
