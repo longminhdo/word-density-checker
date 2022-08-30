@@ -5,10 +5,7 @@ type Props = {};
 
 const { Item } = Form;
 
-var str = 'Give&nbsp;us some&#39;<h2>time</h2>&#39; &amp; space <br> Please';
-var he = require('he');
-he.decode(str);
-console.log(he.decode(str));
+const he = require('he');
 
 function nonAccentVietnamese(str: string) {
   str = str.toLowerCase();
@@ -36,17 +33,37 @@ function nonAccentVietnamese(str: string) {
   return str;
 }
 
+function getAllIndices(str: string) {
+  const indices = [];
+  for (let i = 0; i < str.length; i++) {
+    if (
+      `${str[i]}${str[i + 1]}${str[i + 2]}` === '<h1' ||
+      `${str[i]}${str[i + 1]}${str[i + 2]}` === '<h2' ||
+      `${str[i]}${str[i + 1]}${str[i + 2]}` === '<h3'
+    ) {
+      indices.push(i);
+    }
+  }
+  return indices;
+}
+
+function addStr(str: string, index: number, stringToAdd: string) {
+  return (
+    str.substring(0, index) + stringToAdd + str.substring(index, str.length)
+  );
+}
+
 const HtmlAnalysis = (props: Props) => {
   const getText = (el: string) => {
     let regex = '</?!?(.)[^>]*>';
 
-    var re = new RegExp(regex, 'g');
+    let re = new RegExp(regex, 'g');
 
     return el.replace(re, '').replace(/\n/g, ' ');
   };
 
   const onFinish = (v: any) => {
-    const html = String(v.input);
+    let html = String(v.input);
     const regexp = /<h[1-3][^>]*?>(?<TagText>.*?)<\/h[1-3]>/g;
 
     const array = [...html.matchAll(regexp)];
@@ -61,7 +78,17 @@ const HtmlAnalysis = (props: Props) => {
       return { text, id, tag };
     });
 
-    console.log(result);
+    const indArr = [...getAllIndices(html)];
+    let count = 0;
+    for (let i = 0; i < indArr.length; i++) {
+      let str = ``;
+
+      html = addStr(html, indArr[i] + 3 + count, ` id='${result[i].id}' `);
+      str = ` id='${result[i].id}' `;
+      count += str.length;
+    }
+
+    console.log(html);
   };
 
   return (
